@@ -1,3 +1,8 @@
+using Login_Identity.Data;
+using Login_Identity.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+
 namespace Login_Identity
 {
     public class Program
@@ -5,9 +10,23 @@ namespace Login_Identity
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            var conexion = builder.Configuration.GetConnectionString("default");
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(conexion));
+            //Agregamos para usar Identity
+            builder.Services.AddIdentity<AppUser, IdentityRole>(
+                options =>
+                {
+                    options.Password.RequiredUniqueChars = 0;
+                    options.Password.RequireUppercase = false;
+                    options.Password.RequiredLength = 8;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireLowercase = false;
+                }
+                )
+                .AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
 
             var app = builder.Build();
 
