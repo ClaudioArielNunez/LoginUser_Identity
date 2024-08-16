@@ -11,7 +11,7 @@ namespace Login_Identity.ViewModels
         [DataType(DataType.Password)]
         public string? Password { get; set; }
 
-        [Display(Name = "Recuerdame")]
+        [Display(Name = "Recuérdame")]
         public bool RememberMe { get; set; }
 
     }
