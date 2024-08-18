@@ -9,18 +9,22 @@ namespace Login_Identity.Controllers
     public class AccountController : Controller
     {
         private readonly SignInManager<AppUser> _signInManager;
+        private readonly UserManager<AppUser> _userManager;
 
-        public AccountController(SignInManager<AppUser> signInManager)
+        public AccountController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager)
         {
             _signInManager = signInManager;
+            _userManager = userManager;
         }
+
+        //GET
         public IActionResult Login()
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> LoginAsync(LoginViewModel model)
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -39,14 +43,46 @@ namespace Login_Identity.Controllers
             return View(model);
         }
 
+        //GET
         public IActionResult Register()
         {
             return View();
         }
 
-        public IActionResult Logout()
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            return View();
+            if (ModelState.IsValid)
+            {
+                AppUser user = new AppUser()
+                {
+                    Name = model.Name, 
+                    UserName = model.Email,
+                    Email = model.Email, 
+                    Address = model.Address,
+                };
+                var result = await _userManager.CreateAsync(user, model.Password!);
+
+                if (result.Succeeded)
+                {
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+
+                    return RedirectToAction("Index", "Home");   
+                }
+                //Si no es exitoso
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+            }
+            return View(model);
+        }
+
+        //GET
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction(nameof(HomeController.Index));
         }
     }
 }
