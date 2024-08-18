@@ -19,13 +19,15 @@ namespace Login_Identity
             builder.Services.AddIdentity<AppUser, IdentityRole>(
                 options =>
                 {
-                    options.Password.RequiredUniqueChars = 0;
-                    options.Password.RequireUppercase = false;
+                    options.Password.RequiredUniqueChars = 0;                    
                     options.Password.RequiredLength = 8;
                     options.Password.RequireNonAlphanumeric = false;
                     options.Password.RequireLowercase = false;
+                    options.Password.RequireDigit = false;
+                    options.Password.RequireUppercase = true;                    
                 }
                 )
+                .AddErrorDescriber<CustomIdentityErrorDescriber>() // Añadir el describidor personalizado aquí
                 .AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
 
             var app = builder.Build();

@@ -17,6 +17,7 @@ namespace Login_Identity.ViewModels
         public string? Password { get; set; }
 
         [Compare("Password", ErrorMessage = "El password no coincide")]
+        [DataType(DataType.Password)]
         [Display(Name = "Confirmar Password")]
         public string? ConfirmPassword { get; set; }
 
